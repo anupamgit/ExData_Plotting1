@@ -1,0 +1,34 @@
+## DOWNLOAD DATA IF IT DOES NOT EXIST IN CURRENT DIRECTORY
+
+if(!file.exists("household_power_consumption.txt")) {
+  fileUrl <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
+  download.file(fileUrl, destfile="household_power_consumption.zip", method="curl")
+  unzip("household_power_consumption.zip")
+}
+
+## READ DATA
+
+data <- read.table("household_power_consumption.txt", colClasses=c("character", "character", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"), header=TRUE,sep=";", na.strings="?")
+## Clean data
+data <- data[complete.cases(data),]
+## Transform Date and Time
+data <- transform(data, Date = as.Date(Date, "%d/%m/%Y")) 
+data <- subset(data, Date>="2007-02-01" & Date<="2007-02-02")
+data <- transform(data, Time = strptime(paste(Date,Time), "%Y-%m-%d %H:%M:%S"))
+
+## PLOT IN PNG
+
+png(file="plot4.png", width=480, height=480)
+par(mfrow=c(2,2))
+# plot1
+with(data, plot(Time, Global_active_power, type="l",xlab="", ylab="Global Active Power"))
+#plot2
+with(data, plot(Time, Voltage, type="l",xlab="datetime", ylab="Voltage"))
+#plot3
+with(data, plot(Time,Sub_metering_1,type="l", xlab="", ylab="Energy sub metering"))
+with(data,points(Time,Sub_metering_2,col="red",type="l"))
+with(data,points(Time,Sub_metering_3,col="blue",type="l"))
+legend("topright", col=c("black", "red", "blue"), legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), lty=c(1,1,1), bty="n")
+#plot4
+with(data, plot(Time, Global_reactive_power, type="l",xlab="datetime", ylab="Global_reactive_power"))
+dev.off()
