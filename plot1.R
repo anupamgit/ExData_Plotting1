@@ -7,8 +7,9 @@ if(!file.exists("household_power_consumption.txt")) {
 }
 
 ## READ DATA
-
-data <- read.table("household_power_consumption.txt", colClasses=c("character", "character", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"), header=TRUE,sep=";", na.strings="?")
+datasub <- read.table("household_power_consumption.txt",header=TRUE,sep=";", na.strings="?",nrows=5)
+classes <- sapply(datasub, class)
+data <- read.table("household_power_consumption.txt", colClasses=classes, header=TRUE,sep=";", na.strings="?")
 ## Clean data
 data <- data[complete.cases(data),]
 ## Transform Date and Time
